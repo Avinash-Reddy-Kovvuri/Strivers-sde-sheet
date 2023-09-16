@@ -1,0 +1,83 @@
+
+#Pyhton with non-negative numbers 
+
+from typing import List
+
+def minSubsetSumDifference(arr: List[str], n: int) -> int:
+    # write your code here
+
+    def nn(ind,target,arr,dp):
+
+        if(target==0):
+            return True
+
+        if(ind==0):
+            return target==arr[0]
+
+        if(dp[ind][target]!=-1):
+            return dp[ind][target]
+
+        nottaken = nn(ind-1,target,arr,dp)
+
+        taken = False
+        if(target>=arr[ind]):
+            taken = nn(ind-1,target-arr[ind],arr,dp)
+
+        dp[ind][target] = nottaken or taken
+
+        return dp[ind][target]
+
+        
+    tosum = sum(arr)
+
+    dp = [[-1 for i in range(tosum+1)] for j in range(n)]
+
+    for i in range(0,tosum+1):
+        nn(n-1,i,arr,dp)
+    
+    mini = int(1e9)
+
+    for i in range(tosum+1):
+        if dp[n-1][i]==True:
+            diff = abs(i - (tosum-i))
+            mini = min(mini,diff)
+
+    return mini
+
+(OR)
+
+#java with negative numbers recussion one.
+
+class Solution {
+       public int minimumDifference(int[] nums) {
+
+           int totsum = 0,n=nums.length;
+
+           for(int i : nums){totsum+=i;}
+
+           return nn(n-1,n/2,0,totsum,nums);    
+
+    }
+    public int nn(int ind,int k,int sum,int totalSum,int[] nums){
+
+        if(ind==0){
+            if(k==0){
+                return Math.abs(2*sum - totalSum);
+            }
+            else return (int)1e9;
+        }
+
+        if(k==0) return Math.abs(2*sum - totalSum);
+
+        int pick = nn(ind-1,k-1,sum+nums[ind],totalSum,nums);
+
+        int notpick = nn(ind-1,k,sum,totalSum,nums);
+
+        return Math.min(pick,notpick);
+
+
+    }
+
+   
+}
+   
